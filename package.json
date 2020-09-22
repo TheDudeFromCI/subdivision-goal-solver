@@ -1,0 +1,37 @@
+{
+  "name": "subdivision-goal-solver",
+  "version": "0.1.0",
+  "description": "A simple module that creates task trees procedurally to complete higher level tasks in complex environments.",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepare": "tsc && require-self",
+    "test": "npm run prepare && jest --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheDudeFromCI/subdivision-goal-solver.git"
+  },
+  "keywords": [
+    "ai",
+    "solver",
+    "task",
+    "tree",
+    "resolver",
+    "algorithm"
+  ],
+  "author": "TheDudeFromCI",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheDudeFromCI/subdivision-goal-solver/issues"
+  },
+  "homepage": "https://github.com/TheDudeFromCI/subdivision-goal-solver#readme",
+  "devDependencies": {
+    "jest": "^26.4.2",
+    "require-self": "^0.2.3",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {},
+  "files": [
+    "lib/**/*"
+  ]
+}
