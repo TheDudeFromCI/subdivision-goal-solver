@@ -1,4 +1,4 @@
-import { Strategy, Callback, Task } from ".";
+import { Strategy, Callback, Task, Heuristic } from ".";
 
 const UNLIKELY_TO_RESOLVE_COST = 1000000;
 
@@ -65,24 +65,29 @@ export class Solver
 
         for (const strat of this.strategies)
         {
-            try
-            {
-                const h = strat.getHeuristic(task);
+            const h = this.getHeuristicFor(task, strat);
 
-                if (!h)
-                    continue;
-                
-                const cost = this.resolveCostFor(task, this.searchDepth);
-                nodes.push([strat, cost]);
-            }
-            catch(err)
-            {
+            if (!h)
                 continue;
-            }
+            
+            let cost = h.cost;
+
+            for (const child of h.childTasks)
+                cost += this.resolveCostFor(child, this.searchDepth - 1);
+
+            nodes.push([strat, cost]);
         }
 
         nodes.sort((a, b) => a[1] - b[1]);
         return nodes;
+    }
+
+    private getHeuristicFor(task: Task, strategy: Strategy): Heuristic | null
+    {
+        if (task.name != strategy.taskType)
+            return null;
+
+        return strategy.getHeuristic(task);
     }
 
     /**
@@ -101,27 +106,20 @@ export class Solver
 
         for (const strat of this.strategies)
         {
-            try
-            {
-                const h = strat.getHeuristic(task);
+            const h = this.getHeuristicFor(task, strat);
 
-                if (!h)
-                    continue;
-
-                let childCost = h.cost;
-
-                if (maxDepth > 1)
-                {
-                    for (const childTask of h.childTasks)
-                        childCost += this.resolveCostFor(childTask, maxDepth - 1);
-                }
-
-                cost = Math.min(cost, childCost);
-            }
-            catch(err)
-            {
+            if (!h)
                 continue;
+
+            let childCost = h.cost;
+
+            if (maxDepth > 1)
+            {
+                for (const childTask of h.childTasks)
+                    childCost += this.resolveCostFor(childTask, maxDepth - 1);
             }
+
+            cost = Math.min(cost, childCost);
         }
 
         return cost;
